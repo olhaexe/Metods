@@ -26,7 +26,7 @@ with open('response.pkl', 'w') as fm:
 # items: list - список товаров пренадлежищий к данной категории}
 
 headers = {'User-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36'}
-params = {'store':'', 'records_per_page':12, 'page':1, 'categories':''}
+params = {'store':'', 'records_per_page':50, 'page':1, 'categories':''}
 # , 'ordering':'', 'price_promo__lte':'', 'search':''
 
 categories = list(get('https://5ka.ru/api/v2/categories/', headers=headers).json())
