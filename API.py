@@ -44,6 +44,6 @@ for el in categories:
             f.write(json.dumps({'category_id': str(el['parent_group_code']), 'category_name': str(el['parent_group_name']), 'items': name}))
 
 # проверка:
-with open('PUI2.json', 'r', encoding='utf-8') as test:
+with open('PUI20.json', 'r', encoding='utf-8') as test:
     data = json.load(test)
     print(data)
