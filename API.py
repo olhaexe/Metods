@@ -8,7 +8,7 @@ print('Список репозиториев для пользователя olh
 for repo in repos:
     print(repo['html_url'])
 with open('repo.json', 'w') as f:
-    f.write(json.dumps(repo['html_url']))
+    f.write(json.dumps(repos))
 
 # 2. Изучить список открытых API. Найти среди них любое, требующее авторизацию (любого типа).
 # Выполнить запросы к нему, пройдя авторизацию. Ответ сервера записать в файл.
