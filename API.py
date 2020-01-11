@@ -4,11 +4,12 @@ from requests import get
 import json
 
 repos = get('https://api.github.com/users/olhaexe/repos').json()
-print('Список репозиториев для пользователя olhaexe:')
+li_repos = []
 for repo in repos:
-    print(repo['html_url'])
+    li_repos.append(repo['html_url'])
+print(f'Список репозиториев для пользователя olhaexe: {li_repos}')
 with open('repo.json', 'w') as f:
-    f.write(json.dumps(repos))
+    f.write(json.dumps(li_repos))
 
 # 2. Изучить список открытых API. Найти среди них любое, требующее авторизацию (любого типа).
 # Выполнить запросы к нему, пройдя авторизацию. Ответ сервера записать в файл.
