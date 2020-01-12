@@ -104,7 +104,7 @@ for i in range(len(title_list)):
 #    print(posts_list[i])
 
 posts_class = [BlogPost(el[0], el[1], el[2], el[3], el[4]) for el in posts_list]
-print(posts_class)
+#print(posts_class)
 
 db.session.add_all(tags_class)
 db.session.add_all(writers_class)
