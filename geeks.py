@@ -109,5 +109,6 @@ posts_class = [BlogPost(el[0], el[1], el[2], el[3], el[4]) for el in posts_list]
 db.session.add_all(tags_class)
 db.session.add_all(writers_class)
 db.session.add_all(posts_class)
+db.session.commit()
 
 print('Успешно!')
