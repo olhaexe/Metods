@@ -18,6 +18,7 @@ from database.models import (
 from database.db import BlogDb
 
 start_url = 'https://geekbrains.ru/posts/'
+params = {'page':1}
 
 db_url = 'sqlite:///blogpost.sqlite'
 db = BlogDb(db_url)
@@ -25,6 +26,9 @@ db = BlogDb(db_url)
 def get_page_content(url):
     link = url
     html_content = requests.get(link).text
+    while params['page'] < 54:
+        html_content += requests.get(link, params=params).text
+        params['page'] += 1
     return html_content
 
 def title_link_get(start_url):
@@ -46,15 +50,18 @@ def get_info(url):
     article_content = get_page_content(url)
     writer_url_id = re.findall('\"(/users/[0-9]+)\"', article_content)
     if writer_url_id:
-        title = re.findall('<meta name=\"title\" content=\"([^\"]+)\"', article_content)
+        title = re.findall('<meta name=\"mediator_theme\" content=\"([^\"]+)\"', article_content)
         date_publ = re.findall('<meta name=\"mediator_published_time\" content=\"([^\"]+)\"', article_content)
         article_url = url
         tags = re.findall('<meta name=\"keywords\" content=\"([^\"]+)\"', article_content)
+        if tags == []:
+            tags.append('no tags')
         writer = re.findall('<meta name=\"mediator_author\" content=\"([^\"]+)\"', article_content)
         writer_url = 'https://geekbrains.ru' + str(writer_url_id[0])
         df_article = pd.DataFrame({'title':title[0], 'date_publ':date_publ[0], 'url':url, 'tags':tags[0], 'writer':writer[0], 'writer_url':[writer_url]},
                                 columns=['title', 'date_publ', 'url', 'tags', 'writer', 'writer_url'])
         return df_article
+
 
 df = pd.DataFrame(columns=['title', 'date_publ', 'url', 'tags', 'writer', 'writer_url'])
 
@@ -65,6 +72,7 @@ for u in link_list:
 tags = list(df['tags'])
 writer_list = list(df['writer'])
 writer_url_list = list(df['writer_url'])
+date = list(df['date_publ'])
 
 title_list = list(df['title'])
 posts_list = []
@@ -88,18 +96,18 @@ for i in range(len(title_list)):
     if writer_url_list[i] not in writer_url_unique:
         writer_url_unique.append(writer_url_list[i])
         writers_class.append(Writer(f'{writer_list[i]}', writer_url_list[i]))
-        posts_list.append([title_list[i], link_list[i], writers_class[-1], post_tag_list])
+        posts_list.append([title_list[i], date[i], link_list[i], writers_class[-1], post_tag_list])
     else:
         w_i = writer_url_unique.index(writer_url_list[i])
-        posts_list.append([title_list[i], link_list[i], writers_class[w_i], post_tag_list])
+        posts_list.append([title_list[i], date[i], link_list[i], writers_class[w_i], post_tag_list])
 #for i in range(len(posts_list)):
 #    print(posts_list[i])
 
-posts_class = [BlogPost(el[0], el[1], el[2], el[3]) for el in posts_list]
-#print(posts_class)
+posts_class = [BlogPost(el[0], el[1], el[2], el[3], el[4]) for el in posts_list]
+print(posts_class)
 
 db.session.add_all(tags_class)
 db.session.add_all(writers_class)
 db.session.add_all(posts_class)
-print('Успешно!')
 
+print('Успешно!')
