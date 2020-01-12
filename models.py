@@ -23,13 +23,15 @@ class BlogPost(Base):
     __tablename__ = 'blogpost'
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String)
+    date = Column(String)
     url = Column(String, unique=True)
     writer_id = Column(Integer, ForeignKey('writer.id'))
     writer = relationship('Writer', backref='blogposts')
     tags = relationship('Tag', secondary=assoc_post_tag, backref='blogposts')
 
-    def __init__(self, title: str, url: str, writer, tags=[]):
+    def __init__(self, title: str, date: str, url: str, writer, tags=[]):
         self.title = title
+        self.date = date
         self.url = url
         self.writer = writer
         if tags:
@@ -54,4 +56,3 @@ class Writer(Base):
     def __init__(self, name: str, url: str):
         self.name = name
         self.url = url
-
