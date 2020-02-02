@@ -119,7 +119,7 @@ if __name__ == '__main__':
             name, ext = os.path.splitext(filename)
             try:
                 pdf_result = extract_pdf_image(filename)
-                save_pdf_image(name, image_path, pdf_result)
+                save_pdf_image(name, image_path, *pdf_result)
             except KeyError:
                 res_dict = {'from_file': filename, 'cashbox_number': 'не удалось извлечь'}
                 process_item(res_dict)
