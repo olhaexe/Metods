@@ -117,20 +117,13 @@ if __name__ == '__main__':
     for root, dir, files in os.walk('C:\\Users\\User\\PycharmProjects\\algs\\data_for_parse\\pdf'):
         for filename in files:
             name, ext = os.path.splitext(filename)
-            try:
-                pdf_result = extract_pdf_image(filename)
+            pdf_result = extract_pdf_image(filename)
+            if pdf_result != None:
                 save_pdf_image(name, image_path, *pdf_result)
-            except KeyError:
-                res_dict = {'from_file': filename, 'cashbox_number': 'не удалось извлечь'}
-                process_item(res_dict)
+    os.chdir(image_path)
     for root, dir, files in os.walk(image_path):
         for filename in files:
-            res = extract_number(filename)
+            res = extract_number(os.path.join(root, filename))
             res_dict = {'from_file': filename, 'cashbox_number': res}
             process_item(res_dict)
     print(1)
-
-
-
-
-
