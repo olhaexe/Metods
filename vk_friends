@@ -9,9 +9,19 @@ session = vk.Session(access_token=accesstoken)
 vk_api = vk.API(session, v='5.103')
 user1 = 'https://vk.com/id10123679'
 #user2 = 'https://vk.com/id543097317'
-user2 = 'https://vk.com/id62288402'
-user1_id = int(user1.split('id')[-1])
-user2_id = int(user2.split('id')[-1])
+user2 = 'https://vk.com/rusalka'
+#user2 = 'https://vk.com/id62288402'
+
+def id_get(user_link):
+    if 'id' in user_link:
+        user_id = int(user_link.split('id')[-1])
+    else:
+        user_name = user_link.split('/')[-1]
+        user_id = vk_api.users.get(user_ids=user_name)[0]['id']
+    return int(user_id)
+
+user1_id = id_get(user1)
+user2_id = id_get(user2)
 
 friends_dict1 = {}
 friends_dict2 = {}
