@@ -3,7 +3,8 @@ from pymongo import MongoClient
 
 mongo_client = MongoClient()
 
-accesstoken = '' # токен от живого аккаунта, убрала из соображений безопасности
+# cоздано приложение вконтакте, получен токен через запрос в адресную строку
+accesstoken = '' # токен от живого аккаунта, удален из соображений безопасности
 
 # открыть сессию, обязательно указать номер версии
 session = vk.Session(access_token=accesstoken)
