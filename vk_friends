@@ -11,9 +11,15 @@ session = vk.Session(access_token=accesstoken)
 vk_api = vk.API(session, v='5.103')
 
 # ссылки на пользователей
-user1 = 'https://vk.com/id10123679'
-#user2 = 'https://vk.com/id543097317'
+link_head = 'https://vk.com/id'
+user1 = 'https://vk.com/id556192'
+#user1 = 'https://vk.com/id461191973'
+#user1 = 'https://vk.com/id62288402'
+#user1 = 'https://vk.com/id10123679'
+#user2 = 'https://vk.com/id3174515'
 user2 = 'https://vk.com/rusalka'
+#user2 = 'https://vk.com/id81369279'
+#user2 = 'https://vk.com/id543097317'
 #user2 = 'https://vk.com/id62288402'
 
 # получить id из ссылок
@@ -28,25 +34,33 @@ def id_get(user_link):
 user1_id = id_get(user1)
 user2_id = id_get(user2)
 
+#user1_id = int(user1.split('id')[-1])
+#user2_id = int(user2.split('id')[-1])
+
 # словари для сохранения цепочек
 friends_dict1, friends_dict2, friends_dict3, friends_dict4, friends_dict5 = {}, {}, {}, {}, {}
 
+#friends_chain = [user1_id]
+#tmp_chain = []
+
 # первичные списки друзей:
-user1_friends_id = vk_api.friends.get(user_id=user1_id)['items']
-user2_friends_id = vk_api.friends.get(user_id=user2_id)['items']
+user1_friends_id = vk_api.friends.get(user_id=user1_id, count=10000)['items']
+user2_friends_id = vk_api.friends.get(user_id=user2_id, count=10000)['items']
 
 # проверяем, не друзья ли пользователи между собой
 if user2_id in user1_friends_id:
     #friends_chain.append(user2_id)
-    friends_dict1 = {'first_user': user1_id, 'second_user': user2_id}
+    friends_dict1 = {'person_a': user1, 'chain': [], 'person_b': user2}
 else:
     for user1_friend in user1_friends_id:
         if friends_dict2:
             break
         try:
-            user_friends_id = vk_api.friends.get(user_id=user1_friend)['items']
+            user_friends_id = vk_api.friends.get(user_id=user1_friend, count=10000)['items']
             if user2_id in user_friends_id:
-                friends_dict2 = {'first_user': user1_id, '1': user1_friend, 'second_user': user2_id}
+                friends_dict2 = {'person_a': user1,
+                                 'chain': [link_head + str(user1_friend)],
+                                 'person_b': user2}
                 break
             else:
                 if friends_dict3:
@@ -54,15 +68,19 @@ else:
                 for user2_friend in user2_friends_id:
                     try:
                         if user2_friend in user_friends_id:
-                            friends_dict3 = {'first_user': user1_id, '1': user1_friend, '2': user2_friend, 'second_user': user2_id}
+                            friends_dict3 = {'person_a': user1,
+                                             'chain': [link_head+str(user1_friend), link_head+str(user2_friend)],
+                                             'person_b': user2}
                             break
                         else:
                             if friends_dict4:
                                 break
                             mutual = vk_api.friends.getMutual(source_uid=user1_friend, target_uid=user2_friend)
                             if mutual:
-                                friends_dict4 = {'first_user': user1_id, '1': user1_friend, '2': mutual[0], '3': user2_friend,
-                                                 'second_user': user2_id}
+                                friends_dict4 = {'person_a': user1,
+                                                 'chain': [link_head+str(user1_friend), link_head+str(mutual[0]),
+                                                 link_head+str(user2_friend)],
+                                                 'person_b': user2}
                                 break
                             else:
                                 if friends_dict5:
@@ -71,9 +89,12 @@ else:
                                     try:
                                         mutuals = vk_api.friends.getMutual(source_uid=user, target_uid=user2_friend)
                                         if mutuals:
-                                            friends_dict5 = {'first_user': user1_id, '1': user1_friend, '2': user,
-                                                             '3': mutuals[0], '4': user2_friend,
-                                                             'second_user': user2_id}
+                                            friends_dict5 = {'person_a': user1,
+                                                             'chain': [link_head+str(user1_friend),
+                                                             link_head+str(user),
+                                                             link_head+str(mutuals[0]),
+                                                             link_head+str(user2_friend)],
+                                                             'person_b': user2}
                                             break
                                         else:
                                             pass
