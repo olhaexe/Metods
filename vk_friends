@@ -11,16 +11,16 @@ session = vk.Session(access_token=accesstoken)
 vk_api = vk.API(session, v='5.103')
 
 # ссылки на пользователей
-link_head = 'https://vk.com/id'
+#link_head = 'https://vk.com/id' # использовать, если делать вывод ссылками
 user1 = 'https://vk.com/liasanutiasheva'
-user2 = 'https://vk.com/piterskiy_org'
+user2 = 'https://vk.com/id81369279'
+#user1 = 'https://vk.com/id1155344'
 #user1 = 'https://vk.com/id556192'
-#user1 = 'https://vk.com/id461191973'
-#user1 = 'https://vk.com/id62288402'
 #user1 = 'https://vk.com/id10123679'
+#user2 = 'https://vk.com/piterskiy_org'
+#user2 = 'https://vk.com/id6260455'
 #user2 = 'https://vk.com/id3174515'
 #user2 = 'https://vk.com/rusalka'
-#user2 = 'https://vk.com/id81369279'
 #user2 = 'https://vk.com/id543097317'
 #user2 = 'https://vk.com/id62288402'
 
@@ -36,9 +36,6 @@ def id_get(user_link):
 user1_id = id_get(user1)
 user2_id = id_get(user2)
 
-#user1_id = int(user1.split('id')[-1])
-#user2_id = int(user2.split('id')[-1])
-
 # словари для сохранения цепочек - 6 рукопожатий
 dict_list = [{}, {}, {}, {}, {}, {}]
 
@@ -50,7 +47,6 @@ user2_friends_id = vk_api.friends.get(user_id=user2_id, count=10000)['items']
 if user2_id in user1_friends_id:
     #friends_chain.append(user2_id)
     dict_list[0] = {'first_user': vk_api.users.get(user_ids=user1_id), 'second_user': vk_api.users.get(user_ids=user2_id)}
-# движемся далее по уровням
 else:
     for user1_friend in user1_friends_id:
         if dict_list[1]:
@@ -66,63 +62,54 @@ else:
                 if dict_list[2]:
                     break
                 for user2_friend in user2_friends_id:
-                    try:
-                        if user2_friend in user_friends_id:
-                            dict_list[2] = {'first_user': vk_api.users.get(user_ids=user1_id),
+                    if user2_friend in user_friends_id:
+                        dict_list[2] = {'first_user': vk_api.users.get(user_ids=user1_id),
                                              '1': vk_api.users.get(user_ids=user1_friend),
                                              '2': vk_api.users.get(user_ids=user2_friend),
                                              'second_user': vk_api.users.get(user_ids=user2_id)}
+                        break
+                    else:
+                        if dict_list[3]:
                             break
-                        else:
-                            if dict_list[3]:
-                                break
-                            mutual = vk_api.friends.getMutual(source_uid=user1_friend, target_uid=user2_friend)
-                            if mutual:
-                                dict_list[3] = {'first_user': vk_api.users.get(user_ids=user1_id),
+                        mutual = vk_api.friends.getMutual(source_uid=user1_friend, target_uid=user2_friend)
+                        if mutual:
+                            dict_list[3] = {'first_user': vk_api.users.get(user_ids=user1_id),
                                                  '1': vk_api.users.get(user_ids=user1_friend),
                                                  '2': vk_api.users.get(user_ids=mutual[0]),
                                                  '3': vk_api.users.get(user_ids=user2_friend),
                                                  'second_user': vk_api.users.get(user_ids=user2_id)}
+                            break
+                        else:
+                            if dict_list[4]:
                                 break
-                            else:
-                                if dict_list[4]:
-                                    break
-                                for user in user_friends_id:
-                                    try:
-                                        mutuals = vk_api.friends.getMutual(source_uid=user, target_uid=user2_friend)
-                                        if mutuals:
-                                            dict_list[4] = {'first_user': vk_api.users.get(user_ids=user1_id),
+                            for user in user_friends_id:
+                                mutuals = vk_api.friends.getMutual(source_uid=user, target_uid=user2_friend)
+                                if mutuals:
+                                    dict_list[4] = {'first_user': vk_api.users.get(user_ids=user1_id),
                                                              '1': vk_api.users.get(user_ids=user1_friend),
                                                              '2': vk_api.users.get(user_ids=user),
                                                              '3': vk_api.users.get(user_ids=mutuals[0]),
                                                              '4': vk_api.users.get(user_ids=user2_friend),
                                                              'second_user': vk_api.users.get(user_ids=user2_id)}
-                                            break
-                                        else:
-                                            if dict_list[5]:
-                                                break
-                                            try:
-                                                user_friends_friends_id = vk_api.friends.get(user_id=user, count=10000)['items']
-                                                for user_friend in user_friends_friends_id:
-                                                    mutualss = vk_api.friends.getMutual(source_uid=user_friend,
+                                    break
+                                else:
+                                    if dict_list[5]:
+                                        break
+                                    user_friends_friends_id = vk_api.friends.get(user_id=user, count=10000)['items']
+                                    for user_friend in user_friends_friends_id:
+                                        mutualss = vk_api.friends.getMutual(source_uid=user_friend,
                                                                                    target_uid=user2_friend)
-                                                    if mutualss:
-                                                        dict_list[5] = {'first_user': vk_api.users.get(user_ids=user1_id),
+                                        if mutualss:
+                                            dict_list[5] = {'first_user': vk_api.users.get(user_ids=user1_id),
                                                                     '1': vk_api.users.get(user_ids=user1_friend),
                                                                     '2': vk_api.users.get(user_ids=user),
                                                                     '3': vk_api.users.get(user_ids=user_friend),
                                                                     '4': vk_api.users.get(user_ids=mutualss[0]),
                                                                     '5': vk_api.users.get(user_ids=user2_friend),
                                                                     'second_user': vk_api.users.get(user_ids=user2_id)}
-                                                        break
-                                                    else:
-                                                        pass
-                                            except vk.exceptions.VkAPIError as e:
-                                                pass
-                                    except vk.exceptions.VkAPIError as e:
-                                        pass
-                    except vk.exceptions.VkAPIError as e:
-                        pass
+                                            break
+                                        else:
+                                            pass
         except vk.exceptions.VkAPIError as e:
             pass
 
@@ -134,7 +121,7 @@ def process_item(item):
 
 for i, el in enumerate(dict_list):
     if el:
-        print(f'Для пользователей {user1} и {user2} цепочка рукопожатий: {el}')
+        print(f'Для пользователей с id {user1_id} и {user2_id} цепочка рукопожатий: {el}')
         process_item(el)
         break
     else:
